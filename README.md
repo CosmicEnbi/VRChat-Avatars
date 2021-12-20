@@ -59,14 +59,30 @@ To create custom VRChat avatars you'll need a modeling program such as the popul
   - Save this atlas to a file and remember its location
 - Run CATS `Fix Model`
 - Run CATs `Export Model` to save `.fbx` file
-  - If the export process warns you about too many polygons
-    - Option A: Ignore and export anyway, your model may challenge people's framerates or be hidden by some users safety settings
-    - Option B: Reduce your polygon count
-      - The easy options are deleting unused meshes, including meshes like skin which appear under clothes
-      - If your polygon count is still to high you can reduce the resolution of your model
-        - Run `CATs > Decimation`
-    - For a final export `CATs > Bake` is a more advanced tool and may be more appropriate
-      - I have not used this yet and will update once I have
+  - If CATs complains about excessive polygons see [Model Size and Decimation](#model-size-and-decimation)
+  - For a final export `CATs > Bake` is a more advanced tool and may be more appropriate
+    - I have had some trouble getting baking to work correctly. It seems that if some portion of your model does not have a UV map CATs throws and error
+    - A workaround is to set `Overlap Fix` to `Reproject` and have CATs regenerate the UV maps at the cost of reducing quality
+    - For me this resulted in an unacceptable level of mesh problems so I have been manually decimating my meshes
+- After exporting your model I highly recommend exiting Blender WITHOUT SAVING
+- If you save your Blender file at this point you will loose easy access to the separate meshes and materials since they have all been merged and atlased, this can make it difficult to make further changes later.
+- As such I would make merging and atlasing the last steps before exporting and follow the steps `Decimate > Save > Mesh Merge > Atlas > Export > Exit w/o Saving`
+
+### Model Size and Decimation
+
+If either CATs export or VRChat's upload tools complain about your avatar having too many polygons, you have two options
+
+- Option A: Ignore it and export/upload anyway, your model may challenge people's framerates or be hidden by some users safety settings
+- Option B: Reduce your polygon count
+  - The easy options are deleting unused meshes, including meshes like skin which appear under clothes
+  - If your polygon count is still to high you can reduce the resolution of your model
+    - A quick way to do this is to run `CATs > Decimation`
+- For more granular control you add perform decimation on each individual mesh. This lets you preserve details on some mashes (with the hands and face being particularly import) and drop the detail on other meshes (such as clothing items which are often provided with tens of thousands of faces)
+  - To decimate a mesh, select it then in the bottom right click `Modifier Properties > Add Modifier > Decimate`
+  - Use `collapse` to merge vertices of organic shapes, `un-ubdivide` for textures made of neatly divided polygons, and `planar` for reducing the number of polygons on planar surfaces
+  - The `ratio` will set what fraction of the polygons to keep (computed based on the number of triangles so may be imprecise for other face shapes)
+  - Toggling the computer icon will show/hide the effects of decimation in the editor and can be useful to check for damage such as holes that may arise from excessive decimation
+  - At present VRChat requires < 70,000 polygons for Poor or better performance on desktop and < 32,000 polygons for Excellent The latest performance thresholds and numbers for the Quest can be found on the [VRChat Docs](https://docs.vrchat.com/docs/avatar-performance-ranking-system)
 
 ## Unity Items
 
@@ -136,6 +152,16 @@ To create custom VRChat avatars you'll need a modeling program such as the popul
   - These settings control naturalistic eye animations to give your avatar life
   - Select `Eye Look > Enable`
   - Select the left and right eye bones, usually named `LeftEye` and `RightEye` by CATs
+    - Configure the eye look ranges
+      - Under `Eyes > Rotation States > Looking Up` click `Preview`
+      - Rotation handles will appear on each eye bone, use them to set the maximum upwards looking eye angle
+      - If the handles don't control the eyes, try switching the selected eye bones
+      - When done press `Return`. Repeat for each eye direction.
+    - Configure the eye look intensities
+      - The Calm/Excited slider controls how often your character blinks
+      - The Shy/Confident slider controls how often you look at other players and for how long
+      - For blinking to work you need to configure an eyelid bone or associated viseme
+      - I will update with instructions once I learn how to do this
 - For `Playable Layers` click `Customize` use the defaults, I'm not sure how this works yet
 - Under `Expressions` click `Customize`
   - If your avatar came with custom expressions and parameters files select them from the list
